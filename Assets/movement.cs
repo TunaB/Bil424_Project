@@ -5,11 +5,10 @@ using UnityEngine;
 public class movement : MonoBehaviour
 {
     public float speed = 7.5f;
-     float shootForce = 120;
+     float shootForce = 100;
     float doubleSpeed;
     float oldSpeed;
     public GameObject arrow;
-    public GameObject magic;
     float hp = 100;
     public int arrowCount = 10;
     public Transform arrowSpawn;
@@ -48,10 +47,10 @@ public class movement : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        currentBow = new bow(1,2,"basic");
-        currentStaff = new staff(1, 2,  "basic");
+        currentBow = new bow(1,8,"multi");
+        currentStaff = new staff(1, 8, "fire");
 
-        currentSword = new sword(1, 2,  "basic");
+        currentSword = new sword(1, 8,  "fire");
 
         manaCooldown = Time.time;
         doubleSpeed = speed * 2;
@@ -151,6 +150,9 @@ public class movement : MonoBehaviour
         {
             if(hit.transform.gameObject.tag.Equals("equipment")){
                 HasHit = true;
+                GameObject go= hit.transform.gameObject;
+                equipmentValues qv = go.GetComponent<equipmentValues>();
+                Debug.Log(qv.type + " " + qv.altType);
                 return hit.transform.gameObject;
             }
         }
@@ -294,6 +296,12 @@ public class movement : MonoBehaviour
         {
             return;
         }
+        Quaternion rotation = Quaternion.Euler(90, 0, 0);
+
+        rotation *= gameObject.transform.rotation;
+        arrow.GetComponent<arrow>().dmg = currentStaff.dmg;
+        arrow.GetComponent<arrow>().type = 0;
+        arrow.GetComponent<arrow>().altType = currentBow.type;
         RaycastHit hitinfo;
         if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hitinfo,Mathf.Infinity))
         {
@@ -301,10 +309,25 @@ public class movement : MonoBehaviour
             //HitDistance = (hitinfo.point - transform.position).magnitude;
             HitObject = hitinfo.transform.gameObject;
             
-            GameObject shot = Instantiate(arrow, arrowSpawn.position, Quaternion.identity);
+            GameObject shot = Instantiate(arrow, arrowSpawn.position, rotation);
             Rigidbody rb = shot.GetComponent<Rigidbody>();
             rb.velocity = (hitinfo.point - arrowSpawn.position).normalized* shootForce;
             Destroy(shot, 5);
+            if (currentBow.type.Equals("multi"))
+            {
+                shot = Instantiate(arrow, arrowSpawn.position, gameObject.transform.rotation);
+                rb = shot.GetComponent<Rigidbody>();
+                Vector3 xxx = (hitinfo.point - arrowSpawn.position).normalized;
+                xxx = Quaternion.Euler(0, 15, 0) * xxx;
+                rb.velocity = xxx * (shootForce );
+                Destroy(shot, 5);
+                shot = Instantiate(arrow, arrowSpawn.position, Quaternion.identity);
+                rb = shot.GetComponent<Rigidbody>();
+                xxx = (hitinfo.point - arrowSpawn.position).normalized;
+                xxx = Quaternion.Euler(0, -15, 0) * xxx;
+                rb.velocity = xxx * (shootForce );
+                Destroy(shot, 5);
+            }
         }
         else
         {
@@ -312,6 +335,21 @@ public class movement : MonoBehaviour
             Rigidbody rb = shot.GetComponent<Rigidbody>();
             rb.velocity = Camera.main.transform.forward.normalized * shootForce;
             Destroy(shot, 5);
+            if (currentBow.type.Equals("multi"))
+            {
+                shot = Instantiate(arrow, arrowSpawn.position, Quaternion.identity);
+                rb = shot.GetComponent<Rigidbody>();
+                Vector3 xxx = Camera.main.transform.forward.normalized;
+                xxx = Quaternion.Euler(0, 15, 0) * xxx;
+                rb.velocity = xxx * (shootForce);
+                Destroy(shot, 5);
+                shot = Instantiate(arrow, arrowSpawn.position, Quaternion.identity);
+                rb = shot.GetComponent<Rigidbody>();
+                xxx = Camera.main.transform.forward.normalized;
+                xxx = Quaternion.Euler(0, -15, 0) * xxx;
+                rb.velocity = xxx * (shootForce);
+                Destroy(shot, 5);
+            }
         }
         arrowCount--;
         
@@ -338,17 +376,45 @@ public class movement : MonoBehaviour
         {
             return;
         }
-        magic.GetComponent<magic>().dmg = currentStaff.dmg;
-        GameObject shot = Instantiate(magic, arrowSpawn.position, Quaternion.identity);
+        arrow.GetComponent<arrow>().dmg = currentStaff.dmg;
+        arrow.GetComponent<arrow>().type =1;
+        arrow.GetComponent<arrow>().altType = currentStaff.type;
+
+        GameObject shot = Instantiate(arrow, arrowSpawn.position, Quaternion.identity);
         Rigidbody rb = shot.GetComponent<Rigidbody>();
         GameObject enemy = FindClosestEnemy();
         if (enemy == null)
         {
             //shoot at aimed
             rb.velocity = Camera.main.transform.forward.normalized * (shootForce / 3);
+            if (currentStaff.type.Equals("multi")){
+                shot = Instantiate(arrow, arrowSpawn.position, Quaternion.identity);
+                rb = shot.GetComponent<Rigidbody>();
+                Vector3 xxx = Camera.main.transform.forward.normalized;
+                xxx = Quaternion.Euler(0, 15, 0) * xxx;
+                rb.velocity = xxx * (shootForce / 3);
+                shot = Instantiate(arrow, arrowSpawn.position, Quaternion.identity);
+                rb = shot.GetComponent<Rigidbody>();
+                xxx = Camera.main.transform.forward.normalized;
+                xxx = Quaternion.Euler(0, -15, 0) * xxx;
+                rb.velocity = xxx * (shootForce / 3);
+            }
         }
         else {
             rb.velocity = (enemy.transform.position - arrowSpawn.position).normalized * (shootForce / 3);
+            if (currentStaff.type.Equals("multi"))
+            {
+                shot = Instantiate(arrow, arrowSpawn.position, Quaternion.identity);
+                rb = shot.GetComponent<Rigidbody>();
+                Vector3 xxx = (enemy.transform.position - arrowSpawn.position).normalized;
+                xxx = Quaternion.Euler(0, 15, 0) * xxx;
+                rb.velocity = xxx * (shootForce / 3);
+                shot = Instantiate(arrow, arrowSpawn.position, Quaternion.identity);
+                rb = shot.GetComponent<Rigidbody>();
+                xxx = (enemy.transform.position - arrowSpawn.position).normalized;
+                xxx = Quaternion.Euler(0, -15, 0) * xxx;
+                rb.velocity = xxx * (shootForce / 3);
+            }
         }
 
         mana -= 10;
