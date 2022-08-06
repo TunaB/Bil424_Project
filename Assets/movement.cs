@@ -5,15 +5,18 @@ using UnityEngine;
 public class movement : MonoBehaviour
 {
     public float speed = 7.5f;
-    public float shootForce = 100;
+     float shootForce = 120;
     float doubleSpeed;
     float oldSpeed;
     public GameObject arrow;
+    public GameObject magic;
+    float hp = 100;
+    public int arrowCount = 10;
     public Transform arrowSpawn;
     public GameObject HitObject = null;
     public bool HasHit = false;
     bool aimed = false;
-    public float Length = 15;
+    public float Length = 30;
     public float jumpSpeed = 8.0f;
     public float gravity = 20.0f;
     public Transform playerCameraParent;
@@ -35,12 +38,14 @@ public class movement : MonoBehaviour
     public float jumpForce = 2.0f;
     public bool isGrounded;
     int mode;
+    float manaCooldown;
     public double stamina;
     public int mana = 100;
     bool staminaRecovery = false;
     // Start is called before the first frame update
     void Start()
     {
+        manaCooldown = Time.time;
         doubleSpeed = speed * 2;
         oldSpeed = speed;
         mode = 1;
@@ -128,7 +133,7 @@ public class movement : MonoBehaviour
             mode = 2;
         }
     }
-    void FindHit()
+    GameObject FindHit()
     {
         RaycastHit hitinfo;
         var mask = 8;
@@ -138,23 +143,51 @@ public class movement : MonoBehaviour
         {
             if(hit.transform.gameObject.tag.Equals("equipment")){
                 HasHit = true;
-
+                return hit.transform.gameObject;
             }
         }
+        return null;
             
+    }
+    public void enemyKilled()
+    {
+        arrowCount += 5;
+    }
+    public void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.tag.Equals("enemy"))
+        {
+            hp -= 40;
+            Vector3 vector = gameObject.transform.position- collision.gameObject.transform.position ;
+            vector.y = 0;
+            vector.Normalize();
+            vector = vector * 3;
+            Debug.Log(vector.x+" "+ vector.y+" "+ vector.z);
+            characterController.Move(vector);
+        }
+    }
+    void equip(GameObject item)
+    {
+        //receive item
+        Destroy(item);
     }
     // Update is called once per frame
     void Update()
     {
+        if (hp <= 0)
+        {
+            //fail
+        }
         checkStamina();
         moveAndCamera();
         setMode();
         if (Input.GetKeyDown(KeyCode.E))
         {
             
-            FindHit();
+            GameObject item =FindHit();
             if (HasHit)
             {
+                equip(item);
                 Debug.Log("can equip");
             }
         }
@@ -187,7 +220,7 @@ public class movement : MonoBehaviour
             switch (mode)
             {
                 case 0://sword
-                    //shield
+                    
                     break;
                 case 1://bow
                     unbowAim();
@@ -221,12 +254,21 @@ public class movement : MonoBehaviour
     }
     void useManaPotion()
     {
-        mana += 20;
-        if (mana > 100)
-            mana = 100;
+        if(Time.time> manaCooldown)
+        {
+            mana += 20;
+            if (mana > 100)
+                mana = 100;
+            manaCooldown = Time.time + 2;
+        }
+       
     }
     void bowShoot()
     {
+        if (arrowCount <= 0)
+        {
+            return;
+        }
         RaycastHit hitinfo;
         if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hitinfo,Mathf.Infinity))
         {
@@ -236,8 +278,17 @@ public class movement : MonoBehaviour
             
             GameObject shot = Instantiate(arrow, arrowSpawn.position, Quaternion.identity);
             Rigidbody rb = shot.GetComponent<Rigidbody>();
-            rb.velocity = (hitinfo.point - arrowSpawn.position) * shootForce;
+            rb.velocity = (hitinfo.point - arrowSpawn.position).normalized* shootForce;
+            Destroy(shot, 5);
         }
+        else
+        {
+            GameObject shot = Instantiate(arrow, arrowSpawn.position, Quaternion.identity);
+            Rigidbody rb = shot.GetComponent<Rigidbody>();
+            rb.velocity = Camera.main.transform.forward.normalized * shootForce;
+            Destroy(shot, 5);
+        }
+        arrowCount--;
         
     }
     void unbowAim()
@@ -262,16 +313,22 @@ public class movement : MonoBehaviour
         {
             return;
         }
+        GameObject shot = Instantiate(magic, arrowSpawn.position, Quaternion.identity);
+        Rigidbody rb = shot.GetComponent<Rigidbody>();
         GameObject enemy = FindClosestEnemy();
         if (enemy == null)
         {
             //shoot at aimed
-            return;
+            rb.velocity = Camera.main.transform.forward.normalized * (shootForce / 3);
+
+            
+        }
+        else
+        {
+            rb.velocity = (enemy.transform.position - arrowSpawn.position).normalized * (shootForce / 3);
+
         }
 
-        GameObject shot = Instantiate(arrow, arrowSpawn.position, Quaternion.identity);
-        Rigidbody rb = shot.GetComponent<Rigidbody>();
-        rb.velocity = (enemy.transform.position - arrowSpawn.position) * shootForce/3;
         mana -= 10;
     }
     public GameObject FindClosestEnemy()
