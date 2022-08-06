@@ -42,9 +42,17 @@ public class movement : MonoBehaviour
     public double stamina;
     public int mana = 100;
     bool staminaRecovery = false;
+    bow currentBow;
+    staff currentStaff;
+    sword currentSword;
     // Start is called before the first frame update
     void Start()
     {
+        currentBow = new bow(1,2,"basic");
+        currentStaff = new staff(1, 2,  "basic");
+
+        currentSword = new sword(1, 2,  "basic");
+
         manaCooldown = Time.time;
         doubleSpeed = speed * 2;
         oldSpeed = speed;
@@ -162,13 +170,30 @@ public class movement : MonoBehaviour
             vector.y = 0;
             vector.Normalize();
             vector = vector * 3;
-            Debug.Log(vector.x+" "+ vector.y+" "+ vector.z);
+            //Debug.Log(vector.x+" "+ vector.y+" "+ vector.z);
             characterController.Move(vector);
         }
     }
     void equip(GameObject item)
     {
         //receive item
+        equipmentValues values = item.GetComponent<equipmentValues>();
+        if (values.type.Equals("sword"))
+        {
+            currentSword = new sword(values.level,values.dmg,values.altType);
+        }
+        else if (values.type.Equals("bow"))
+        {
+            currentBow = new bow(values.level, values.dmg, values.altType);
+        }
+        else if (values.type.Equals("staff"))
+        {
+            currentStaff = new staff(values.level, values.dmg, values.altType);
+        }
+        else if(values.type.Equals("relic"))
+        {
+            //relic
+        }
         Destroy(item);
     }
     // Update is called once per frame
@@ -188,7 +213,7 @@ public class movement : MonoBehaviour
             if (HasHit)
             {
                 equip(item);
-                Debug.Log("can equip");
+                Debug.Log(item.GetComponent<equipmentValues>().level);
             }
         }
         else if (Input.GetKeyDown(KeyCode.Q))
@@ -313,6 +338,7 @@ public class movement : MonoBehaviour
         {
             return;
         }
+        magic.GetComponent<magic>().dmg = currentStaff.dmg;
         GameObject shot = Instantiate(magic, arrowSpawn.position, Quaternion.identity);
         Rigidbody rb = shot.GetComponent<Rigidbody>();
         GameObject enemy = FindClosestEnemy();
@@ -320,13 +346,9 @@ public class movement : MonoBehaviour
         {
             //shoot at aimed
             rb.velocity = Camera.main.transform.forward.normalized * (shootForce / 3);
-
-            
         }
-        else
-        {
+        else {
             rb.velocity = (enemy.transform.position - arrowSpawn.position).normalized * (shootForce / 3);
-
         }
 
         mana -= 10;
@@ -424,5 +446,51 @@ public class movement : MonoBehaviour
        {
            animator.Play("Idle");
        }*/
+    }
+
+    class bow
+    {
+        public int level;
+        public float dmg;
+
+        public string type;
+        public bow(int level,float dmg, string type)
+        {
+            this.level = level;
+            
+            this.dmg = dmg;
+            this.type = type;
+        }
+
+    }
+    class sword
+    {
+        public int level;
+        public float dmg;
+
+        public string type;
+        public sword(int level, float dmg,  string type)
+        {
+            this.level = level;
+            
+            this.dmg = dmg;
+            this.type = type;
+        }
+
+    }
+    class staff
+    {
+        public int level;
+        public float dmg;
+
+        public string type;
+        public staff(int level, float dmg, string type)
+        {
+            this.level = level;
+            
+            this.dmg = dmg;
+            this.type = type;
+        }
+
     }
 }

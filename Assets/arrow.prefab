@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 6481129496781150002}
   - component: {fileID: 3695455114742904570}
   - component: {fileID: 7901751539953409583}
+  - component: {fileID: 4253686452658583420}
   m_Layer: 0
   m_Name: arrow
   m_TagString: weapon
@@ -91,8 +92,8 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 0.5000001
-  m_Height: 2
+  m_Radius: 0.8000001
+  m_Height: 3
   m_Direction: 1
   m_Center: {x: 0.000000059604645, y: 0, z: -0.00000008940697}
 --- !u!54 &7901751539953409583
@@ -111,3 +112,15 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &4253686452658583420
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3813357167584034173}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bef253c580a1bfd47af79af16fc90713, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

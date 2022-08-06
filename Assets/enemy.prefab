@@ -95,6 +95,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 206c83dc5411365448d564e66f28648f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  level: 1
+  hp: 100
   equipment: {fileID: 6790240771868453216, guid: e3a0d18df60dc094eac5f46cddd654ee,
     type: 3}
 --- !u!195 &7345406900457666857
@@ -134,7 +136,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 3
+  m_CollisionDetection: 2
 --- !u!136 &6812921567305774631
 CapsuleCollider:
   m_ObjectHideFlags: 0

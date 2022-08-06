@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class magicDestroy : MonoBehaviour
+public class magic : MonoBehaviour
 {
     Collider collider;
+    public float dmg;
     // Start is called before the first frame update
     void Start()
     {

@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-2029696098331801214
+--- !u!114 &-8817930372968327212
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 58aac3dcdcee86147a3eadadc03b8189, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  dmg: 0
 --- !u!1001 &1838307147415480543
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -99,7 +100,8 @@ PrefabInstance:
       propertyPath: m_CollisionDetection
       value: 1
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 4253686452658583420, guid: 5c6f555ef6c042340874dd794b4763fe, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 5c6f555ef6c042340874dd794b4763fe, type: 3}
 --- !u!1 &3272215596775495074 stripped
 GameObject:
