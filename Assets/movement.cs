@@ -44,9 +44,11 @@ public class movement : MonoBehaviour
     bow currentBow;
     staff currentStaff;
     sword currentSword;
+    List<GameObject> relicList;
     // Start is called before the first frame update
     void Start()
     {
+        relicList = new List<GameObject>();
         currentBow = new bow(1,8,"multi");
         currentStaff = new staff(1, 8, "fire");
 
@@ -194,7 +196,8 @@ public class movement : MonoBehaviour
         }
         else if(values.type.Equals("relic"))
         {
-            //relic
+            relicList.Add(item);
+            //add relic effects to player
         }
         Destroy(item);
     }
@@ -204,6 +207,8 @@ public class movement : MonoBehaviour
         if (hp <= 0)
         {
             //fail
+            //check relicList to permanent relics
+            //final screen
         }
         checkStamina();
         moveAndCamera();

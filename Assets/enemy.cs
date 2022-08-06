@@ -6,8 +6,8 @@ using UnityEngine.AI;
 
 public class enemy : MonoBehaviour
 {
-    public int level=1;
-    public float hp = 10;
+    public int level;
+    public float hp ;
     Transform goal;
      GameObject character;
     NavMeshAgent agent;
@@ -40,7 +40,7 @@ public class enemy : MonoBehaviour
         goal =character.transform;
         agent = GetComponent<NavMeshAgent>();
         agent.destination = goal.position;
-        
+        hp = (level  * Random.Range(10, 20));
     }
 
 IEnumerator poison()
@@ -157,7 +157,9 @@ IEnumerator poison()
             equipmentValues.effect = 15;
         }
 
-        Instantiate(equipment, gameObject.transform.position, Quaternion.identity);
+        GameObject eq =Instantiate(equipment, gameObject.transform.position, Quaternion.identity);
+        Destroy(eq, 20);
+
     }
     // Update is called once per frame
     void Update()
