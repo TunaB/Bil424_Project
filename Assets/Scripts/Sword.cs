@@ -4,16 +4,23 @@ using UnityEngine;
 
 public class Sword : MonoBehaviour
 {
-    private double damage;
-    private double length;
-    private double damage_angle;
+    
+    public GameObject player;
+    public GameObject enemy;
+    
+        public void SwordDamage(float radius)
+        {
+            Collider[] hitColliders = Physics.OverlapSphere(player.transform.position, radius);
+            foreach (var hitCollider in hitColliders)
+            {
+                Vector3 directionToTarget = player.transform.position - enemy.transform.position;
+                float angle = Vector3.Angle(transform.forward, directionToTarget);
+                float distance = directionToTarget.magnitude;
 
-    public void Hit()
-    {
-        if (Input.GetMouseButtonDown(1))
-        {   
-
+                if (Mathf.Abs(angle) < 90 && distance < 10)
+                    hitCollider.SendMessage("AddDamage");
+            }
         }
-    }
+    
     
 }

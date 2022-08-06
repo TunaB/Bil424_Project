@@ -9,4 +9,16 @@ public class ButtonController : MonoBehaviour
     {
         SceneManager.LoadScene("GameScene");
     }
+    public void Settings()
+    {
+        SceneManager.LoadScene("Settings");
+    }
+    public void Artifacts()
+    {
+        SceneManager.LoadScene("Artifacts");
+    }
+    public void Back()
+    {
+        SceneManager.LoadScene("MainMenu");
+    }
 }
