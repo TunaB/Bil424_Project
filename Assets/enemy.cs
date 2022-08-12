@@ -6,52 +6,140 @@ using UnityEngine.AI;
 
 public class enemy : MonoBehaviour
 {
-    public int level=1;
-    public float hp = 100;
+    public int level;
+    public float hp ;
     Transform goal;
      GameObject character;
     NavMeshAgent agent;
     movement movement;
     public GameObject equipment;
     GameManager gameManager;
+    List<string> altTypes;
+    float fireTime;
+    float poisonTime;
+    bool isFire=false;
+    bool isPoison = false;
+    float fireDmg;
+    float poisonDmg;
+    int poisonCounter;
+    int fireCounter;
 
     // Start is called before the first frame update
     void Start()
     {
-        character= GameObject.Find("character");
+        altTypes = new List<string>();
+        altTypes.Add("basic");
+        altTypes.Add("fire");
+        altTypes.Add("multi");
+        altTypes.Add("heavy");
+        altTypes.Add("posion");
+
+        character = GameObject.Find("character");
         movement = character.GetComponent<movement>();
         gameManager = GameObject.Find("hud").GetComponent<GameManager>();
         goal =character.transform;
         agent = GetComponent<NavMeshAgent>();
         agent.destination = goal.position;
+        hp = (level  * Random.Range(10, 20));
     }
-    public void OnCollisionEnter(Collision collision)
+
+IEnumerator poison()
     {
+        while (isPoison)
+        {
+            
+            hp -= poisonDmg;
+            poisonCounter--;
+            if (poisonCounter == 0)
+            {
+                isPoison = false;
+            }
+            yield return new WaitForSeconds(1);
+
+        }
+
+    }
+    IEnumerator fire()
+    {
+        while (isFire)
+        {
+            hp -= fireDmg;
+            fireCounter--;
+            if (fireCounter == 0)
+            {
+                isFire = false;
+            }
+            yield return new WaitForSeconds(1);
+
+        }
+    }
+    void enterFire(float dmg)
+    {
+        fireCounter = 3;
+
+        fireDmg = dmg / 8;
+        isFire = true;
+        fireTime = Time.time;
+        StartCoroutine(fire());
+    }
+    void enterPoison(float dmg)
+    {
+        poisonCounter = 5;
+
+        poisonDmg = dmg / 10;
+        isPoison = true;
+        poisonTime = Time.time;
+        StartCoroutine(poison());
+
+    }
+
+    public void OnTriggerEnter(Collider collision)
+    {
+        
         if (collision.gameObject.tag.Equals("weapon"))
         {
-            hp -= 40;
+            float dmg = collision.gameObject.GetComponent<arrow>().dmg;
+            string type= collision.gameObject.GetComponent<arrow>().altType;
+            Debug.Log(type);
+            switch (type)
+            {
+                case "heavy":
+                    dmg = (float)(dmg * 1.5);
+                    break;
+                case "fire":
+                    Debug.Log("saddsa");
+                    enterFire(dmg);
+                    break;
+                case "poison":
+                    enterPoison(dmg);
+                    break;
+
+            }
+
+
+            hp -= dmg;
         }
     }
     void dropLoot()
     {
+        var index = Random.Range(0, altTypes.Count);
+        var randAltType = altTypes[index];
         equipmentValues equipmentValues = equipment.GetComponent<equipmentValues>();
         equipmentValues.level = level;
-        equipmentValues.dmg = Random.Range(1, 2) * level;
+        equipmentValues.dmg = Random.Range(8, 12) * level;
+        equipmentValues.altType = randAltType;
         int type = Random.Range(0, 10);
         if (type < 3)
         {
             equipmentValues.type = "sword";
-            equipmentValues.altType = "basic";
         }
         else if (type < 6)
         {
             equipmentValues.type = "bow";
-            equipmentValues.altType = "basic";
         }
         else if (type < 9)
         {
             equipmentValues.type = "staff";
-            equipmentValues.altType = "basic";
         }
         else
         {
@@ -69,7 +157,9 @@ public class enemy : MonoBehaviour
             equipmentValues.effect = 15;
         }
 
-        Instantiate(equipment, gameObject.transform.position, Quaternion.identity);
+        GameObject eq =Instantiate(equipment, gameObject.transform.position, Quaternion.identity);
+        Destroy(eq, 20);
+
     }
     // Update is called once per frame
     void Update()
@@ -84,6 +174,7 @@ public class enemy : MonoBehaviour
             gameManager.removeFromList(gameObject);
             Destroy(gameObject);
         }
+        
         //gameObject.transform.position
     }
 }

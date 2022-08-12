@@ -38,7 +38,7 @@ public class GameManager : MonoBehaviour
         {
             enemyList.Add(createEnemy());
             index++;
-            yield return new WaitForSeconds(3);
+            yield return new WaitForSeconds(5);
         }
     }
     GameObject createEnemy()
