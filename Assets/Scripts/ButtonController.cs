@@ -7,7 +7,7 @@ public class ButtonController : MonoBehaviour
 {
     public void StartGame()
     {
-        SceneManager.LoadScene("GameScene");
+        SceneManager.LoadScene("character");
     }
     public void Settings()
     {

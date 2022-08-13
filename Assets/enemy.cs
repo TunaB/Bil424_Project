@@ -23,6 +23,7 @@ public class enemy : MonoBehaviour
     float poisonDmg;
     int poisonCounter;
     int fireCounter;
+    
 
     // Start is called before the first frame update
     void Start()
@@ -98,26 +99,36 @@ IEnumerator poison()
         
         if (collision.gameObject.tag.Equals("weapon"))
         {
-            float dmg = collision.gameObject.GetComponent<arrow>().dmg;
-            string type= collision.gameObject.GetComponent<arrow>().altType;
-            Debug.Log(type);
-            switch (type)
+            Debug.Log("df");
+            if (collision.gameObject.name == "Sword")
             {
-                case "heavy":
-                    dmg = (float)(dmg * 1.5);
-                    break;
-                case "fire":
-                    Debug.Log("saddsa");
-                    enterFire(dmg);
-                    break;
-                case "poison":
-                    enterPoison(dmg);
-                    break;
-
+                hp -= 40;
             }
+            else
+            {
+                float dmg = collision.gameObject.GetComponent<arrow>().dmg;
+                string type = collision.gameObject.GetComponent<arrow>().altType;
+                Debug.Log(type);
+                switch (type)
+                {
+                    case "heavy":
+                        dmg = (float)(dmg * 1.5);
+                        break;
+                    case "fire":
+                        Debug.Log("saddsa");
+                        enterFire(dmg);
+                        break;
+                    case "poison":
+                        enterPoison(dmg);
+                        break;
+
+                }
+                hp -= dmg;
+            }
+            
 
 
-            hp -= dmg;
+            
         }
     }
     void dropLoot()
@@ -173,6 +184,14 @@ IEnumerator poison()
             gameManager.killCount++;
             gameManager.removeFromList(gameObject);
             Destroy(gameObject);
+        }
+        if(Vector3.Distance(character.transform.position, transform.position) > 150)
+        {
+            Vector2 random = Random.insideUnitCircle.normalized * Random.Range(5, 15);
+            Vector3 vector = character.transform.position;
+            vector.x += random.x;
+            vector.z += random.y;
+            transform.position = vector;
         }
         
         //gameObject.transform.position

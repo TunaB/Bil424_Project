@@ -17,52 +17,55 @@ public class Deneme : MonoBehaviour
     void Update()
     {
         Vector3 start = player.transform.position;
-        Vector3 direction = Vector3.down;
+        Vector3 direction = Vector3.down*10;
         RaycastHit hit;
         RaycastHit hit2;
 
         if (Physics.Raycast(start, direction, out hit))
         {
-            if (player.transform.position.x > hit.collider.gameObject.transform.position.x+900)
+            if (hit.transform.tag.Equals("Terrain"))
             {
-                if (!Physics.Raycast(start+new Vector3(1000,0,0), direction, out hit2))
-                    Instantiate(terr, new Vector3(hit.collider.gameObject.transform.position.x + 1000, hit.collider.gameObject.transform.position.y, hit.collider.gameObject.transform.position.z), Quaternion.identity);
-            }
-            if (player.transform.position.x < hit.collider.gameObject.transform.position.x + 100)
-            {
-                if (!Physics.Raycast(start + new Vector3(-1000, 0, 0), direction, out hit2))
-                    Instantiate(terr, new Vector3(hit.collider.gameObject.transform.position.x - 1000, hit.collider.gameObject.transform.position.y, hit.collider.gameObject.transform.position.z), Quaternion.identity);
-            }
-            if (player.transform.position.z > hit.collider.gameObject.transform.position.z + 900)
-            {
-                if (!Physics.Raycast(start + new Vector3(0, 0, 1000), direction, out hit2))
-                    Instantiate(terr, new Vector3(hit.collider.gameObject.transform.position.x , hit.collider.gameObject.transform.position.y, hit.collider.gameObject.transform.position.z + 1000), Quaternion.identity);
-            }
-            if (player.transform.position.z < hit.collider.gameObject.transform.position.z + 100)
-            {
-                if (!Physics.Raycast(start + new Vector3(0, 0, -1000), direction, out hit2))
-                    Instantiate(terr, new Vector3(hit.collider.gameObject.transform.position.x, hit.collider.gameObject.transform.position.y, hit.collider.gameObject.transform.position.z - 1000), Quaternion.identity);
-            }
+                if (player.transform.position.x > hit.collider.gameObject.transform.position.x + 900)
+                {
+                    if (!Physics.Raycast(start + new Vector3(1000, 0, 0), direction, out hit2))
+                        Instantiate(terr, new Vector3(hit.collider.gameObject.transform.position.x + 1000, hit.collider.gameObject.transform.position.y, hit.collider.gameObject.transform.position.z), Quaternion.identity);
+                }
+                if (player.transform.position.x < hit.collider.gameObject.transform.position.x + 100)
+                {
+                    if (!Physics.Raycast(start + new Vector3(-1000, 0, 0), direction, out hit2))
+                        Instantiate(terr, new Vector3(hit.collider.gameObject.transform.position.x - 1000, hit.collider.gameObject.transform.position.y, hit.collider.gameObject.transform.position.z), Quaternion.identity);
+                }
+                if (player.transform.position.z > hit.collider.gameObject.transform.position.z + 900)
+                {
+                    if (!Physics.Raycast(start + new Vector3(0, 0, 1000), direction, out hit2))
+                        Instantiate(terr, new Vector3(hit.collider.gameObject.transform.position.x, hit.collider.gameObject.transform.position.y, hit.collider.gameObject.transform.position.z + 1000), Quaternion.identity);
+                }
+                if (player.transform.position.z < hit.collider.gameObject.transform.position.z + 100)
+                {
+                    if (!Physics.Raycast(start + new Vector3(0, 0, -1000), direction, out hit2))
+                        Instantiate(terr, new Vector3(hit.collider.gameObject.transform.position.x, hit.collider.gameObject.transform.position.y, hit.collider.gameObject.transform.position.z - 1000), Quaternion.identity);
+                }
 
-            if (player.transform.position.x > hit.collider.gameObject.transform.position.x + 900 && player.transform.position.z > hit.collider.gameObject.transform.position.z + 900)
-            {
-                if (!Physics.Raycast(start + new Vector3(1000, 0, 1000), direction, out hit2))
-                    Instantiate(terr, new Vector3(hit.collider.gameObject.transform.position.x+1000, hit.collider.gameObject.transform.position.y, hit.collider.gameObject.transform.position.z + 1000), Quaternion.identity);
-            }
-            if (player.transform.position.x > hit.collider.gameObject.transform.position.x + 900 && player.transform.position.z < hit.collider.gameObject.transform.position.z + 100)
-            {
-                if (!Physics.Raycast(start + new Vector3(1000, 0, -1000), direction, out hit2))
-                    Instantiate(terr, new Vector3(hit.collider.gameObject.transform.position.x+1000, hit.collider.gameObject.transform.position.y, hit.collider.gameObject.transform.position.z - 1000), Quaternion.identity);
-            }
-            if (player.transform.position.x < hit.collider.gameObject.transform.position.x + 100 && player.transform.position.z > hit.collider.gameObject.transform.position.z + 900)
-            {
-                if (!Physics.Raycast(start + new Vector3(-1000, 0, 1000), direction, out hit2))
-                    Instantiate(terr, new Vector3(hit.collider.gameObject.transform.position.x-1000, hit.collider.gameObject.transform.position.y, hit.collider.gameObject.transform.position.z + 1000), Quaternion.identity);
-            }
-            if (player.transform.position.x < hit.collider.gameObject.transform.position.x + 100 && player.transform.position.z < hit.collider.gameObject.transform.position.z + 100)
-            {
-                if (!Physics.Raycast(start + new Vector3(-1000, 0, -1000), direction, out hit2))
-                    Instantiate(terr, new Vector3(hit.collider.gameObject.transform.position.x-1000, hit.collider.gameObject.transform.position.y, hit.collider.gameObject.transform.position.z - 1000), Quaternion.identity);
+                if (player.transform.position.x > hit.collider.gameObject.transform.position.x + 900 && player.transform.position.z > hit.collider.gameObject.transform.position.z + 900)
+                {
+                    if (!Physics.Raycast(start + new Vector3(1000, 0, 1000), direction, out hit2))
+                        Instantiate(terr, new Vector3(hit.collider.gameObject.transform.position.x + 1000, hit.collider.gameObject.transform.position.y, hit.collider.gameObject.transform.position.z + 1000), Quaternion.identity);
+                }
+                if (player.transform.position.x > hit.collider.gameObject.transform.position.x + 900 && player.transform.position.z < hit.collider.gameObject.transform.position.z + 100)
+                {
+                    if (!Physics.Raycast(start + new Vector3(1000, 0, -1000), direction, out hit2))
+                        Instantiate(terr, new Vector3(hit.collider.gameObject.transform.position.x + 1000, hit.collider.gameObject.transform.position.y, hit.collider.gameObject.transform.position.z - 1000), Quaternion.identity);
+                }
+                if (player.transform.position.x < hit.collider.gameObject.transform.position.x + 100 && player.transform.position.z > hit.collider.gameObject.transform.position.z + 900)
+                {
+                    if (!Physics.Raycast(start + new Vector3(-1000, 0, 1000), direction, out hit2))
+                        Instantiate(terr, new Vector3(hit.collider.gameObject.transform.position.x - 1000, hit.collider.gameObject.transform.position.y, hit.collider.gameObject.transform.position.z + 1000), Quaternion.identity);
+                }
+                if (player.transform.position.x < hit.collider.gameObject.transform.position.x + 100 && player.transform.position.z < hit.collider.gameObject.transform.position.z + 100)
+                {
+                    if (!Physics.Raycast(start + new Vector3(-1000, 0, -1000), direction, out hit2))
+                        Instantiate(terr, new Vector3(hit.collider.gameObject.transform.position.x - 1000, hit.collider.gameObject.transform.position.y, hit.collider.gameObject.transform.position.z - 1000), Quaternion.identity);
+                }
             }
         }
     }

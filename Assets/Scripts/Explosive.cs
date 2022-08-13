@@ -15,15 +15,28 @@ public class Explosive : MonoBehaviour
     {
         if (transform.position.y == 0)
         {
-            
-            Collider[] hitColliders = Physics.OverlapSphere(transform.position, radius-(radius/2)* System.Convert.ToSingle(isStrong));
+
+            Collider[] hitColliders = Physics.OverlapSphere(transform.position, radius - (radius / 2) * System.Convert.ToSingle(isStrong));
             foreach (var hitCollider in hitColliders)
             {
-               hitCollider.SendMessage("AddDamage",50);
+                hitCollider.SendMessage("AddDamage", 50);
             }
             
 
-            
+
+        }
+    }
+     void Update(){
+        if (transform.position.y == 0)
+        {
+            Collider[] hitColliders = Physics.OverlapSphere(transform.position, 10);
+            foreach (var hitCollider in hitColliders)
+            {
+                if (hitCollider.tag.Equals("enemy"))
+                    Debug.Log("BOMB");
+                
+            }
+            Destroy(this);
         }
     }
 }

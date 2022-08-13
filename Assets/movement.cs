@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class movement : MonoBehaviour
 {
@@ -8,8 +9,11 @@ public class movement : MonoBehaviour
      float shootForce = 100;
     float doubleSpeed;
     float oldSpeed;
+    public Animation swordAnim;
     public GameObject arrow;
-    float hp = 100;
+    public GameObject bomb;
+    public GameObject swor;
+    public float hp = 100;
     public int arrowCount = 10;
     public Transform arrowSpawn;
     public GameObject HitObject = null;
@@ -41,6 +45,7 @@ public class movement : MonoBehaviour
     public double stamina;
     public int mana = 100;
     bool staminaRecovery = false;
+    bool def=false;
     bow currentBow;
     staff currentStaff;
     sword currentSword;
@@ -51,9 +56,11 @@ public class movement : MonoBehaviour
         relicList = new List<GameObject>();
         currentBow = new bow(1,8,"multi");
         currentStaff = new staff(1, 8, "fire");
-
+        transform.GetChild(0).gameObject.SetActive(false);
+        swor.SetActive(false);
         currentSword = new sword(1, 8,  "fire");
 
+        
         manaCooldown = Time.time;
         doubleSpeed = speed * 2;
         oldSpeed = speed;
@@ -169,6 +176,7 @@ public class movement : MonoBehaviour
     {
         if (collision.gameObject.tag.Equals("enemy"))
         {
+            if(!def)
             hp -= 40;
             Vector3 vector = gameObject.transform.position- collision.gameObject.transform.position ;
             vector.y = 0;
@@ -206,6 +214,7 @@ public class movement : MonoBehaviour
     {
         if (hp <= 0)
         {
+            //SceneManager.LoadScene("EndGame");
             //fail
             //check relicList to permanent relics
             //final screen
@@ -236,6 +245,8 @@ public class movement : MonoBehaviour
             switch (mode)
             {
                 case 0://sword
+                    def = true;
+                    Debug.Log("fesd");
                     //shield
                     break;
                 case 1://bow
@@ -252,7 +263,8 @@ public class movement : MonoBehaviour
             switch (mode)
             {
                 case 0://sword
-                    
+                    def = false;
+                    Debug.Log("dasd");
                     break;
                 case 1://bow
                     unbowAim();
@@ -269,6 +281,7 @@ public class movement : MonoBehaviour
             {
                 case 0:
                     //attack
+                    swordAttack();
                     break;
                 case 1:
                     if (aimed)
@@ -283,6 +296,23 @@ public class movement : MonoBehaviour
                     break;
             }
         }
+    }
+
+    void swordAttack()
+    {
+
+        //GameObject s = Instantiate(swor,transform.position,Quaternion.identity);
+        //s.transform.SetParent(transform);
+        //s.transform.position = transform.position;
+        transform.GetChild(0).gameObject.SetActive(true);
+        transform.GetChild(0).gameObject.GetComponent<Animator>().Play("attackSword");
+        Invoke("SetFalse",0.75f);
+        //transform.GetChild(0).gameObject.SetActive(false);        //Destroy(s,1);
+    }
+    void SetFalse()
+    {
+        transform.GetChild(0).gameObject.SetActive(false);
+
     }
     void useManaPotion()
     {
@@ -445,6 +475,11 @@ public class movement : MonoBehaviour
     }
     void ThrowGrenade()
     {
+        GameObject bom = Instantiate(bomb, arrowSpawn.position,Quaternion.identity);
+        bom.GetComponent<Rigidbody>().AddForce(new Vector3(0,5, transform.forward.normalized.z*5));
+        //bom.GetComponent<Rigidbody>().velocity = new Vector3(0, 5, arrowSpawn.forward.normalized.z * 5);
+        bom.GetComponent<Rigidbody>().velocity = new Vector3(0, 5, transform.TransformDirection(Vector3.forward).z * 5);
+
         //get current selected greande
         //get camera forward
         //create bomb object and launch
@@ -534,6 +569,7 @@ public class movement : MonoBehaviour
         }
 
     }
+    
     class sword
     {
         public int level;
@@ -549,6 +585,7 @@ public class movement : MonoBehaviour
         }
 
     }
+    
     class staff
     {
         public int level;
