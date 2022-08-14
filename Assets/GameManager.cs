@@ -62,7 +62,7 @@ public class GameManager : MonoBehaviour
     {
         GUI.color = Color.black;
         GUI.Label(new Rect(Screen.width / 4 - 50, 20, 100, 100), "stamina " + movement.stamina);
-
+        GUI.Label(new Rect(Screen.width / 4 - 50, 40, 100, 100), "hp " + movement.hp);
         GUI.Label(new Rect(Screen.width / 2 - 50, 20, 100, 100), "mana " + movement.mana);
         GUI.Label(new Rect(Screen.width / 2 - 50, 100, 100, 100), "arrows " + movement.arrowCount);
         if (movement.mode == 0)
