@@ -75,6 +75,16 @@ public class movement : MonoBehaviour
         animator = gameObject.GetComponent<Animator>();
         jump = new Vector3(0.0f, 1.0f, 0.0f);
         rb = GetComponent<Rigidbody>();
+        StartCoroutine(regenHP());
+    }
+    IEnumerator regenHP()
+    {
+        while (Application.isPlaying)
+        {
+            if(hp<100)
+                hp++;
+            yield return new WaitForSeconds(2);
+        }
     }
     public List<relic> getRelic()
     {
