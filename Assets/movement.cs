@@ -41,7 +41,7 @@ public class movement : MonoBehaviour
     public Vector3 jump;
     public float jumpForce = 2.0f;
     public bool isGrounded;
-    int mode;
+    public int mode;
     float manaCooldown;
     public double stamina;
     public int mana = 100;
@@ -75,6 +75,16 @@ public class movement : MonoBehaviour
         animator = gameObject.GetComponent<Animator>();
         jump = new Vector3(0.0f, 1.0f, 0.0f);
         rb = GetComponent<Rigidbody>();
+        StartCoroutine(regenHP());
+    }
+    IEnumerator regenHP()
+    {
+        while (Application.isPlaying)
+        {
+            if(hp<100)
+                hp++;
+            yield return new WaitForSeconds(2);
+        }
     }
     public List<relic> getRelic()
     {

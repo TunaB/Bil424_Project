@@ -115,6 +115,8 @@ public class GameManager : MonoBehaviour
             GUI.Label(new Rect(100, 100 + diff, 100, 100), relic.effect + " +%" + relic.effectType);
             diff += 10;
         }
+        GUI.Label(new Rect(Screen.width / 3 - 50, 100, 100, 100), "level " + level + " " + type + " " + weapon);
+
         GUI.Label(new Rect(Screen.width / 2, Screen.height/2, 100, 100), "-" );
         int x = 20;
         GUI.Label(new Rect(Screen.width - 100, 100 , 100, 100), "enemy hp " );
