@@ -41,7 +41,7 @@ public class movement : MonoBehaviour
     public Vector3 jump;
     public float jumpForce = 2.0f;
     public bool isGrounded;
-    int mode;
+    public int mode;
     float manaCooldown;
     public double stamina;
     public int mana = 100;
