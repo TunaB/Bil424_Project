@@ -15,6 +15,7 @@ public class enemy : MonoBehaviour
     public GameObject equipment;
     GameManager gameManager;
     List<string> altTypes;
+    List<string> effectTypes;
     float fireTime;
     float poisonTime;
     bool isFire=false;
@@ -23,7 +24,7 @@ public class enemy : MonoBehaviour
     float poisonDmg;
     int poisonCounter;
     int fireCounter;
-    
+    public bool boss = false;
 
 
     // Start is called before the first frame update
@@ -36,13 +37,20 @@ public class enemy : MonoBehaviour
         altTypes.Add("heavy");
         altTypes.Add("posion");
 
+        effectTypes = new List<string>();
+        effectTypes.Add("armor");
+        effectTypes.Add("speed");
+        effectTypes.Add("damage");
+        effectTypes.Add("jump");
+        effectTypes.Add("hp");
+
         character = GameObject.Find("character");
         movement = character.GetComponent<movement>();
         gameManager = GameObject.Find("hud").GetComponent<GameManager>();
         goal =character.transform;
         agent = GetComponent<NavMeshAgent>();
         agent.destination = goal.position;
-        hp = (level  * Random.Range(10, 20));
+        hp = (level  * Random.Range(10, 20)) * (boss ? 3 : 1);
     }
 
 IEnumerator poison()
@@ -161,6 +169,10 @@ IEnumerator poison()
         else
         {
             equipmentValues.type = "relic";
+            index = Random.Range(0, effectTypes.Count);
+            var randEffectType = effectTypes[index];
+            equipmentValues.effectType = randEffectType;
+            equipmentValues.effect = (float)(Random.Range(0, 500)) / 100.0f;
             int perm=Random.Range(0, 100);
             if (perm > 90)
             {

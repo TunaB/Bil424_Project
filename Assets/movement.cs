@@ -14,6 +14,7 @@ public class movement : MonoBehaviour
     public GameObject bomb;
     public GameObject swor;
     public float hp = 100;
+    float maxHP = 100;
     public int arrowCount = 10;
     public Transform arrowSpawn;
     public GameObject HitObject = null;
@@ -44,18 +45,20 @@ public class movement : MonoBehaviour
     float manaCooldown;
     public double stamina;
     public int mana = 100;
+    float dmgBoost = 0;
+    float armorBoost = 0;
     bool staminaRecovery = false;
     bool def=false;
     bow currentBow;
     staff currentStaff;
     sword currentSword;
-    List<GameObject> relicList;
+    List<relic> relicList;
     List<PlayerPrefs> perms;
     // Start is called before the first frame update
     void Start()
     {
-        relicList = new List<GameObject>();
-        currentBow = new bow(1,8,"multi");
+        relicList = new List<relic>();
+        currentBow = new bow(1,8,"fire");
         currentStaff = new staff(1, 8, "fire");
         transform.GetChild(0).gameObject.SetActive(false);
         swor.SetActive(false);
@@ -72,6 +75,22 @@ public class movement : MonoBehaviour
         animator = gameObject.GetComponent<Animator>();
         jump = new Vector3(0.0f, 1.0f, 0.0f);
         rb = GetComponent<Rigidbody>();
+    }
+    public List<relic> getRelic()
+    {
+        return relicList;
+    }
+    public bow getBow()
+    {
+        return currentBow;
+    }
+    public staff getStaff()
+    {
+        return currentStaff;
+    }
+    public sword getSword()
+    {
+        return currentSword;
     }
     void OnCollisionStay()
     {
@@ -177,7 +196,7 @@ public class movement : MonoBehaviour
     {
         if (collision.gameObject.tag.Equals("enemy"))
         {
-            if(!def)
+           
             hp -= 40;
             Vector3 vector = gameObject.transform.position- collision.gameObject.transform.position ;
             vector.y = 0;
@@ -205,22 +224,33 @@ public class movement : MonoBehaviour
         }
         else if(values.type.Equals("relic"))
         {
-            relicList.Add(item);
+            relicList.Add(new relic(values.permanent, values.effect, values.effectType));
 
-            
-            if (values.altType.Equals("basic"))
+
+            switch (values.effectType)
             {
+                case "hp":
+                    maxHP += maxHP * values.effect / 100;
+                    break;
+                case "damage":
+                    dmgBoost += values.effect;
+                    break;
+                case "armor":
+                    armorBoost += values.effect;
+                    break;
+                case "jump":
+                    jumpSpeed += jumpSpeed * values.effect / 100;
+                    break;
+                case "speed":
+                    speed += speed * values.effect / 100;
+                    break;
+
 
             }
-            if (values.altType.Equals("fire"))
+            if (values.permanent)
             {
-
+                //add perm list
             }
-            if (values.altType.Equals("poison"))
-            {
-
-            }
-            //add relic effects to player
         }
         Destroy(item);
     }
@@ -347,53 +377,57 @@ public class movement : MonoBehaviour
             return;
         }
         Quaternion rotation = Quaternion.Euler(90, 0, 0);
+        Debug.Log(rotation);
 
-        rotation *= gameObject.transform.rotation;
-        arrow.GetComponent<arrow>().dmg = currentStaff.dmg;
+        //rotation *= gameObject.transform.rotation;
+        Debug.Log(rotation.eulerAngles);
+
+        Debug.Log(gameObject.transform.rotation.eulerAngles);
+        arrow.GetComponent<arrow>().dmg = currentBow.dmg + (currentBow.dmg * dmgBoost / 100);
         arrow.GetComponent<arrow>().type = 0;
         arrow.GetComponent<arrow>().altType = currentBow.type;
         RaycastHit hitinfo;
-        if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hitinfo,Mathf.Infinity))
+        if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hitinfo, Mathf.Infinity))
         {
             HasHit = true;
             //HitDistance = (hitinfo.point - transform.position).magnitude;
             HitObject = hitinfo.transform.gameObject;
-            
-            GameObject shot = Instantiate(arrow, arrowSpawn.position, rotation);
+
+            GameObject shot = Instantiate(arrow, arrowSpawn.position, Quaternion.Euler(arrow.transform.rotation.eulerAngles + gameObject.transform.rotation.eulerAngles));
             Rigidbody rb = shot.GetComponent<Rigidbody>();
-            rb.velocity = (hitinfo.point - arrowSpawn.position).normalized* shootForce;
+            rb.velocity = (hitinfo.point - arrowSpawn.position).normalized * shootForce;
             Destroy(shot, 5);
             if (currentBow.type.Equals("multi"))
             {
-                shot = Instantiate(arrow, arrowSpawn.position, gameObject.transform.rotation);
+                shot = Instantiate(arrow, arrowSpawn.position, Quaternion.Euler(arrow.transform.rotation.eulerAngles + gameObject.transform.rotation.eulerAngles));
                 rb = shot.GetComponent<Rigidbody>();
                 Vector3 xxx = (hitinfo.point - arrowSpawn.position).normalized;
                 xxx = Quaternion.Euler(0, 15, 0) * xxx;
-                rb.velocity = xxx * (shootForce );
+                rb.velocity = xxx * (shootForce);
                 Destroy(shot, 5);
-                shot = Instantiate(arrow, arrowSpawn.position, Quaternion.identity);
+                shot = Instantiate(arrow, arrowSpawn.position, Quaternion.Euler(arrow.transform.rotation.eulerAngles + gameObject.transform.rotation.eulerAngles));
                 rb = shot.GetComponent<Rigidbody>();
                 xxx = (hitinfo.point - arrowSpawn.position).normalized;
                 xxx = Quaternion.Euler(0, -15, 0) * xxx;
-                rb.velocity = xxx * (shootForce );
+                rb.velocity = xxx * (shootForce);
                 Destroy(shot, 5);
             }
         }
         else
         {
-            GameObject shot = Instantiate(arrow, arrowSpawn.position, Quaternion.identity);
+            GameObject shot = Instantiate(arrow, arrowSpawn.position, Quaternion.Euler(arrow.transform.rotation.eulerAngles + gameObject.transform.rotation.eulerAngles));
             Rigidbody rb = shot.GetComponent<Rigidbody>();
             rb.velocity = Camera.main.transform.forward.normalized * shootForce;
             Destroy(shot, 5);
             if (currentBow.type.Equals("multi"))
             {
-                shot = Instantiate(arrow, arrowSpawn.position, Quaternion.identity);
+                shot = Instantiate(arrow, arrowSpawn.position, Quaternion.Euler(arrow.transform.rotation.eulerAngles + gameObject.transform.rotation.eulerAngles));
                 rb = shot.GetComponent<Rigidbody>();
                 Vector3 xxx = Camera.main.transform.forward.normalized;
                 xxx = Quaternion.Euler(0, 15, 0) * xxx;
                 rb.velocity = xxx * (shootForce);
                 Destroy(shot, 5);
-                shot = Instantiate(arrow, arrowSpawn.position, Quaternion.identity);
+                shot = Instantiate(arrow, arrowSpawn.position, Quaternion.Euler(arrow.transform.rotation.eulerAngles + gameObject.transform.rotation.eulerAngles));
                 rb = shot.GetComponent<Rigidbody>();
                 xxx = Camera.main.transform.forward.normalized;
                 xxx = Quaternion.Euler(0, -15, 0) * xxx;
@@ -402,7 +436,7 @@ public class movement : MonoBehaviour
             }
         }
         arrowCount--;
-        
+
     }
     void unbowAim()
     {
@@ -426,40 +460,46 @@ public class movement : MonoBehaviour
         {
             return;
         }
-        arrow.GetComponent<arrow>().dmg = currentStaff.dmg;
-        arrow.GetComponent<arrow>().type =1;
+        arrow.GetComponent<arrow>().dmg = currentStaff.dmg + (currentStaff.dmg * dmgBoost / 100);
+        arrow.GetComponent<arrow>().type = 1;
         arrow.GetComponent<arrow>().altType = currentStaff.type;
 
-        GameObject shot = Instantiate(arrow, arrowSpawn.position, Quaternion.identity);
-        Rigidbody rb = shot.GetComponent<Rigidbody>();
+
         GameObject enemy = FindClosestEnemy();
         if (enemy == null)
         {
+            GameObject shot = Instantiate(arrow, arrowSpawn.position, Quaternion.Euler(arrow.transform.rotation.eulerAngles + gameObject.transform.rotation.eulerAngles));
+            Rigidbody rb = shot.GetComponent<Rigidbody>();
             //shoot at aimed
             rb.velocity = Camera.main.transform.forward.normalized * (shootForce / 3);
-            if (currentStaff.type.Equals("multi")){
-                shot = Instantiate(arrow, arrowSpawn.position, Quaternion.identity);
+            if (currentStaff.type.Equals("multi"))
+            {
+                shot = Instantiate(arrow, arrowSpawn.position, Quaternion.Euler(arrow.transform.rotation.eulerAngles + gameObject.transform.rotation.eulerAngles));
                 rb = shot.GetComponent<Rigidbody>();
                 Vector3 xxx = Camera.main.transform.forward.normalized;
                 xxx = Quaternion.Euler(0, 15, 0) * xxx;
                 rb.velocity = xxx * (shootForce / 3);
-                shot = Instantiate(arrow, arrowSpawn.position, Quaternion.identity);
+                shot = Instantiate(arrow, arrowSpawn.position, Quaternion.Euler(arrow.transform.rotation.eulerAngles + gameObject.transform.rotation.eulerAngles));
                 rb = shot.GetComponent<Rigidbody>();
                 xxx = Camera.main.transform.forward.normalized;
                 xxx = Quaternion.Euler(0, -15, 0) * xxx;
                 rb.velocity = xxx * (shootForce / 3);
             }
         }
-        else {
+        else
+        {
+            Quaternion rotation = Quaternion.Euler(Quaternion.FromToRotation(gameObject.transform.forward, (enemy.transform.position - arrowSpawn.position).normalized).eulerAngles + arrow.transform.rotation.eulerAngles + gameObject.transform.rotation.eulerAngles);
+            GameObject shot = Instantiate(arrow, arrowSpawn.position, rotation);
+            Rigidbody rb = shot.GetComponent<Rigidbody>();
             rb.velocity = (enemy.transform.position - arrowSpawn.position).normalized * (shootForce / 3);
             if (currentStaff.type.Equals("multi"))
             {
-                shot = Instantiate(arrow, arrowSpawn.position, Quaternion.identity);
+                shot = Instantiate(arrow, arrowSpawn.position, rotation);
                 rb = shot.GetComponent<Rigidbody>();
                 Vector3 xxx = (enemy.transform.position - arrowSpawn.position).normalized;
                 xxx = Quaternion.Euler(0, 15, 0) * xxx;
                 rb.velocity = xxx * (shootForce / 3);
-                shot = Instantiate(arrow, arrowSpawn.position, Quaternion.identity);
+                shot = Instantiate(arrow, arrowSpawn.position, rotation);
                 rb = shot.GetComponent<Rigidbody>();
                 xxx = (enemy.transform.position - arrowSpawn.position).normalized;
                 xxx = Quaternion.Euler(0, -15, 0) * xxx;
@@ -500,76 +540,22 @@ public class movement : MonoBehaviour
         //create bomb object and launch
         //detonate
     }
-    void temp()
+    public class relic
     {
-        /*if (Input.GetKey(KeyCode.W))
-       {
-           if (Input.GetKey(KeyCode.A))
-           {
-               transform.position += -transform.right * Time.deltaTime * velocity;
-               transform.position += transform.forward * Time.deltaTime * velocity;
-               animator.Play("f_left");
-           }
+        public bool perm;
+        public float effect;
 
-           else if (Input.GetKey(KeyCode.D))
-           {
-               transform.position += transform.right * Time.deltaTime * velocity;
-               transform.position += transform.forward * Time.deltaTime * velocity;
-               animator.Play("f_right");
-           }
-           else
-           {
-               transform.position += transform.forward * Time.deltaTime * velocity;
-               animator.Play("forward");
-           }
+        public string effectType;
+        public relic(bool perm, float effect, string effectType)
+        {
+            this.perm = perm;
 
-       }
-       else if (Input.GetKey(KeyCode.S))
-       {
-           if (Input.GetKey(KeyCode.A))
-           {
-               transform.position += -transform.right * Time.deltaTime * velocity;
-               transform.position += -transform.forward * Time.deltaTime * velocity;
-               animator.Play("b_left");
-           }
+            this.effect = effect;
+            this.effectType = effectType;
+        }
 
-           else if (Input.GetKey(KeyCode.D))
-           {
-               transform.position += transform.right * Time.deltaTime * velocity;
-               transform.position += -transform.forward * Time.deltaTime * velocity;
-               animator.Play("b_right");
-           }
-           else
-           {
-               transform.position += -transform.forward * Time.deltaTime * velocity;
-               animator.Play("backward");
-           }
-
-       }
-       else if (Input.GetKey(KeyCode.A))
-       {
-           transform.position += -transform.right * Time.deltaTime * velocity;
-           animator.Play("left");
-       }
-
-       else if (Input.GetKey(KeyCode.D))
-       {
-           transform.position += transform.right * Time.deltaTime * velocity;
-           animator.Play("right");
-       }
-       else if (Input.GetKey(KeyCode.Space) && isGrounded)
-       {
-           rb.AddForce(jump * jumpForce, ForceMode.Impulse);
-           isGrounded = false;
-           animator.Play("jump");
-       }
-       if (!(Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.W)))
-       {
-           animator.Play("Idle");
-       }*/
     }
-
-    class bow
+    public class bow
     {
         public int level;
         public float dmg;
@@ -584,8 +570,8 @@ public class movement : MonoBehaviour
         }
 
     }
-    
-    class sword
+
+    public class sword
     {
         public int level;
         public float dmg;
@@ -600,8 +586,8 @@ public class movement : MonoBehaviour
         }
 
     }
-    
-    class staff
+
+    public class staff
     {
         public int level;
         public float dmg;

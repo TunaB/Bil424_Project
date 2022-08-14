@@ -12,8 +12,11 @@ public class GameManager : MonoBehaviour
     float timePassed = 0;
     List<GameObject> enemyList;
     int index = 0;
+    float dmg;
+    string weapon;
+    int level;
+    string type;
 
-    
     // Start is called before the first frame update
     void Start()
     {
@@ -27,8 +30,29 @@ public class GameManager : MonoBehaviour
         if(killCount > 5)
         {
             currentLevel++;
+            if (currentLevel % 10 == 0)
+            {
+                enemyList.Add(createBoss());
+                index++;
+
+            }
             killCount = 0;
         }
+    }
+    GameObject createBoss()
+    {
+        Vector2 random = Random.insideUnitCircle.normalized * Random.Range(20, 40);
+        Vector3 vector = player.transform.position;
+        vector.x += random.x;
+        vector.z += random.y;
+        enemy.GetComponent<enemy>().level = currentLevel;
+        enemy.transform.localScale *= 3;
+        enemy.GetComponent<enemy>().boss = true;
+        GameObject boss = Instantiate(enemy, vector, Quaternion.identity);
+        enemy.GetComponent<enemy>().boss = false;
+        enemy.transform.localScale /= 3;
+        return boss;
+
     }
     public void removeFromList(GameObject enem)
     {
@@ -62,7 +86,35 @@ public class GameManager : MonoBehaviour
         GUI.Label(new Rect(Screen.width / 4 - 50, 40, 100, 100), "hp " + movement.hp);
         GUI.Label(new Rect(Screen.width / 2 - 50, 20, 100, 100), "mana " + movement.mana);
         GUI.Label(new Rect(Screen.width / 2 - 50, 100, 100, 100), "arrows " + movement.arrowCount);
-
+        GUI.Label(new Rect(Screen.width / 2 - 50, 60, 100, 100), "level " + currentLevel);
+        if (movement.mode == 0)
+        {
+            weapon = "sword";
+            dmg = movement.getSword().dmg;
+            type = movement.getSword().type;
+            level = movement.getSword().level;
+        }
+        else if (movement.mode == 1)
+        {
+            weapon = "bow";
+            dmg = movement.getBow().dmg;
+            type = movement.getBow().type;
+            level = movement.getBow().level;
+        }
+        else if (movement.mode == 2)
+        {
+            weapon = "staff";
+            dmg = movement.getStaff().dmg;
+            type = movement.getStaff().type;
+            level = movement.getStaff().level;
+        }
+        int diff = 20;
+        GUI.Label(new Rect(100, 100, 100, 100), "Relics");
+        foreach (movement.relic relic in movement.getRelic())
+        {
+            GUI.Label(new Rect(100, 100 + diff, 100, 100), relic.effect + " +%" + relic.effectType);
+            diff += 10;
+        }
         GUI.Label(new Rect(Screen.width / 2, Screen.height/2, 100, 100), "-" );
         int x = 20;
         GUI.Label(new Rect(Screen.width - 100, 100 , 100, 100), "enemy hp " );
