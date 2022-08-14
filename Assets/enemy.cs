@@ -25,6 +25,7 @@ public class enemy : MonoBehaviour
     int fireCounter;
     
 
+
     // Start is called before the first frame update
     void Start()
     {
@@ -131,6 +132,11 @@ IEnumerator poison()
             
         }
     }
+
+    public void explode()
+    {
+        hp -= 100;
+    }
     void dropLoot()
     {
         var index = Random.Range(0, altTypes.Count);
@@ -164,8 +170,8 @@ IEnumerator poison()
             {
                 equipmentValues.permanent = false;
             }
-            equipmentValues.effectType = "armor";
-            equipmentValues.effect = 15;
+            //equipmentValues.effectType = "armor";
+            //equipmentValues.effect = 15;
         }
 
         GameObject eq =Instantiate(equipment, gameObject.transform.position, Quaternion.identity);

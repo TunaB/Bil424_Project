@@ -10,7 +10,7 @@ public class Explosive : MonoBehaviour
     public bool isFlame;
     public bool isSlowing;
     public bool isStrong;
-
+   
     public void explode(float radius)
     {
         if (transform.position.y == 0)
@@ -26,17 +26,16 @@ public class Explosive : MonoBehaviour
 
         }
     }
-     void Update(){
-        if (transform.position.y == 0)
-        {
+     public void OnTriggerEnter(Collider col){
+        
             Collider[] hitColliders = Physics.OverlapSphere(transform.position, 10);
             foreach (var hitCollider in hitColliders)
             {
-                if (hitCollider.tag.Equals("enemy"))
-                    Debug.Log("BOMB");
+            if (hitCollider.tag.Equals("enemy"))
+                hitCollider.GetComponent<enemy>().explode();
                 
             }
             Destroy(this);
-        }
+        
     }
 }

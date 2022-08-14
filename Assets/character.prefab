@@ -94,7 +94,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10306, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: a7a35a310f4bf234099e346d4c063b79, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -313,6 +313,16 @@ PrefabInstance:
       propertyPath: m_Name
       value: Sword
       objectReference: {fileID: 0}
+    - target: {fileID: 398857022184421350, guid: cc208585ba5a42b4bb62e995330e0bc6,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1935130805679560294, guid: cc208585ba5a42b4bb62e995330e0bc6,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 4aac98aef254ecf429643db51adb8f72, type: 2}
     - target: {fileID: 8242429837234068048, guid: cc208585ba5a42b4bb62e995330e0bc6,
         type: 3}
       propertyPath: m_RootOrder
@@ -320,8 +330,13 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8242429837234068048, guid: cc208585ba5a42b4bb62e995330e0bc6,
         type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.6939287
+      objectReference: {fileID: 0}
+    - target: {fileID: 8242429837234068048, guid: cc208585ba5a42b4bb62e995330e0bc6,
+        type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.86
+      value: 0.943
       objectReference: {fileID: 0}
     - target: {fileID: 8242429837234068048, guid: cc208585ba5a42b4bb62e995330e0bc6,
         type: 3}

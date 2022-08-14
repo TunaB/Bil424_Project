@@ -50,6 +50,7 @@ public class movement : MonoBehaviour
     staff currentStaff;
     sword currentSword;
     List<GameObject> relicList;
+    List<PlayerPrefs> perms;
     // Start is called before the first frame update
     void Start()
     {
@@ -205,6 +206,20 @@ public class movement : MonoBehaviour
         else if(values.type.Equals("relic"))
         {
             relicList.Add(item);
+
+            
+            if (values.altType.Equals("basic"))
+            {
+
+            }
+            if (values.altType.Equals("fire"))
+            {
+
+            }
+            if (values.altType.Equals("poison"))
+            {
+
+            }
             //add relic effects to player
         }
         Destroy(item);

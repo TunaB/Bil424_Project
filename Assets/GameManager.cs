@@ -12,6 +12,8 @@ public class GameManager : MonoBehaviour
     float timePassed = 0;
     List<GameObject> enemyList;
     int index = 0;
+
+    
     // Start is called before the first frame update
     void Start()
     {
