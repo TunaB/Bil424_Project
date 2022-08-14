@@ -9,6 +9,7 @@ public class movement : MonoBehaviour
     float doubleSpeed;
     float oldSpeed;
     public GameObject arrow;
+    float maxHP = 100;
     float hp = 100;
     public int arrowCount = 10;
     public Transform arrowSpawn;
@@ -34,21 +35,39 @@ public class movement : MonoBehaviour
     public Rigidbody rb;
     public Animator animator;
     public Vector3 jump;
-    public float jumpForce = 2.0f;
     public bool isGrounded;
-    int mode;
+    public int mode;
     float manaCooldown;
     public double stamina;
     public int mana = 100;
+    float dmgBoost=0;
+    float armorBoost = 0;
     bool staminaRecovery = false;
     bow currentBow;
     staff currentStaff;
     sword currentSword;
-    List<GameObject> relicList;
+    List<relic> relicList;
+    public List<relic> getRelic()
+    {
+        return relicList;
+    }
+    public bow getBow()
+    {
+        return currentBow;
+    }
+    public staff getStaff()
+    {
+        return currentStaff;
+    }
+    public sword getSword()
+    {
+        return currentSword;
+    }
     // Start is called before the first frame update
     void Start()
     {
-        relicList = new List<GameObject>();
+        //apply perm list
+        relicList = new List<relic>();
         currentBow = new bow(1,8,"multi");
         currentStaff = new staff(1, 8, "fire");
 
@@ -169,7 +188,7 @@ public class movement : MonoBehaviour
     {
         if (collision.gameObject.tag.Equals("enemy"))
         {
-            hp -= 40;
+            hp -= 40-(40* armorBoost/100);
             Vector3 vector = gameObject.transform.position- collision.gameObject.transform.position ;
             vector.y = 0;
             vector.Normalize();
@@ -196,8 +215,31 @@ public class movement : MonoBehaviour
         }
         else if(values.type.Equals("relic"))
         {
-            relicList.Add(item);
-            //add relic effects to player
+            relicList.Add(new relic(values.permanent,values.effect,values.effectType));
+            switch (values.effectType)
+            {
+                case "hp":
+                    maxHP += maxHP * values.effect / 100;
+                    break;
+                case "damage":
+                    dmgBoost += values.effect;
+                    break;
+                case "armor":
+                    armorBoost+= values.effect;
+                    break;
+                case "jump":
+                    jumpSpeed+= jumpSpeed * values.effect / 100;
+                    break;
+                case "speed":
+                    speed += speed * values.effect / 100;
+                    break;
+                
+
+            }
+            if (values.permanent)
+            {
+                //add perm list
+            }
         }
         Destroy(item);
     }
@@ -304,7 +346,7 @@ public class movement : MonoBehaviour
         Quaternion rotation = Quaternion.Euler(90, 0, 0);
 
         rotation *= gameObject.transform.rotation;
-        arrow.GetComponent<arrow>().dmg = currentStaff.dmg;
+        arrow.GetComponent<arrow>().dmg = currentBow.dmg+(currentBow.dmg* dmgBoost/100);
         arrow.GetComponent<arrow>().type = 0;
         arrow.GetComponent<arrow>().altType = currentBow.type;
         RaycastHit hitinfo;
@@ -381,7 +423,7 @@ public class movement : MonoBehaviour
         {
             return;
         }
-        arrow.GetComponent<arrow>().dmg = currentStaff.dmg;
+        arrow.GetComponent<arrow>().dmg = currentStaff.dmg + (currentStaff.dmg * dmgBoost / 100);
         arrow.GetComponent<arrow>().type =1;
         arrow.GetComponent<arrow>().altType = currentStaff.type;
 
@@ -450,76 +492,23 @@ public class movement : MonoBehaviour
         //create bomb object and launch
         //detonate
     }
-    void temp()
+    public class relic
     {
-        /*if (Input.GetKey(KeyCode.W))
-       {
-           if (Input.GetKey(KeyCode.A))
-           {
-               transform.position += -transform.right * Time.deltaTime * velocity;
-               transform.position += transform.forward * Time.deltaTime * velocity;
-               animator.Play("f_left");
-           }
+        public bool perm;
+        public float effect;
 
-           else if (Input.GetKey(KeyCode.D))
-           {
-               transform.position += transform.right * Time.deltaTime * velocity;
-               transform.position += transform.forward * Time.deltaTime * velocity;
-               animator.Play("f_right");
-           }
-           else
-           {
-               transform.position += transform.forward * Time.deltaTime * velocity;
-               animator.Play("forward");
-           }
+        public string effectType;
+        public relic(bool perm, float effect, string effectType)
+        {
+            this.perm = perm;
 
-       }
-       else if (Input.GetKey(KeyCode.S))
-       {
-           if (Input.GetKey(KeyCode.A))
-           {
-               transform.position += -transform.right * Time.deltaTime * velocity;
-               transform.position += -transform.forward * Time.deltaTime * velocity;
-               animator.Play("b_left");
-           }
+            this.effect = effect;
+            this.effectType = effectType;
+        }
 
-           else if (Input.GetKey(KeyCode.D))
-           {
-               transform.position += transform.right * Time.deltaTime * velocity;
-               transform.position += -transform.forward * Time.deltaTime * velocity;
-               animator.Play("b_right");
-           }
-           else
-           {
-               transform.position += -transform.forward * Time.deltaTime * velocity;
-               animator.Play("backward");
-           }
-
-       }
-       else if (Input.GetKey(KeyCode.A))
-       {
-           transform.position += -transform.right * Time.deltaTime * velocity;
-           animator.Play("left");
-       }
-
-       else if (Input.GetKey(KeyCode.D))
-       {
-           transform.position += transform.right * Time.deltaTime * velocity;
-           animator.Play("right");
-       }
-       else if (Input.GetKey(KeyCode.Space) && isGrounded)
-       {
-           rb.AddForce(jump * jumpForce, ForceMode.Impulse);
-           isGrounded = false;
-           animator.Play("jump");
-       }
-       if (!(Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.W)))
-       {
-           animator.Play("Idle");
-       }*/
     }
 
-    class bow
+    public class bow
     {
         public int level;
         public float dmg;
@@ -534,7 +523,7 @@ public class movement : MonoBehaviour
         }
 
     }
-    class sword
+    public class sword
     {
         public int level;
         public float dmg;
@@ -549,7 +538,7 @@ public class movement : MonoBehaviour
         }
 
     }
-    class staff
+    public class staff
     {
         public int level;
         public float dmg;
