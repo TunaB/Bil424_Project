@@ -30,8 +30,29 @@ public class GameManager : MonoBehaviour
         if(killCount > 5)
         {
             currentLevel++;
+            if (currentLevel % 10 == 0)
+            {
+                enemyList.Add(createBoss());
+                index++;
+               
+            }
             killCount = 0;
         }
+    }
+    GameObject createBoss()
+    {
+        Vector2 random = Random.insideUnitCircle.normalized * Random.Range(20, 40);
+        Vector3 vector = player.transform.position;
+        vector.x += random.x;
+        vector.z += random.y;
+        enemy.GetComponent<enemy>().level = currentLevel;
+        enemy.transform.localScale *= 3;
+        enemy.GetComponent<enemy>().boss = true;
+        GameObject boss= Instantiate(enemy, vector, Quaternion.identity);
+        enemy.GetComponent<enemy>().boss = false;
+        enemy.transform.localScale /= 3;
+        return boss;
+
     }
     public void removeFromList(GameObject enem)
     {
@@ -65,6 +86,8 @@ public class GameManager : MonoBehaviour
         GUI.Label(new Rect(Screen.width / 4 - 50, 40, 100, 100), "hp " + movement.hp);
         GUI.Label(new Rect(Screen.width / 2 - 50, 20, 100, 100), "mana " + movement.mana);
         GUI.Label(new Rect(Screen.width / 2 - 50, 100, 100, 100), "arrows " + movement.arrowCount);
+        GUI.Label(new Rect(Screen.width / 2 - 50, 60, 100, 100), "level " + currentLevel);
+
         if (movement.mode == 0)
         {
             weapon = "sword";

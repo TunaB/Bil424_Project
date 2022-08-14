@@ -24,6 +24,7 @@ public class enemy : MonoBehaviour
     float poisonDmg;
     int poisonCounter;
     int fireCounter;
+    public bool boss=false;
 
     // Start is called before the first frame update
     void Start()
@@ -49,7 +50,7 @@ public class enemy : MonoBehaviour
         goal =character.transform;
         agent = GetComponent<NavMeshAgent>();
         agent.destination = goal.position;
-        hp = (level  * Random.Range(10, 20));
+        hp = (level  * Random.Range(10, 20))*(boss?3:1);
     }
 
 IEnumerator poison()
